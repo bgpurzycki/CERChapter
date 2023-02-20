@@ -1,0 +1,149 @@
+#############################################################
+###### The Cultural Evolution of Religion and Cooperation
+###### Bendixen, Lightner, and Purzycki
+#############################################################
+
+setwd("")
+
+library(extrafont)
+#font_import() # use if you haven't loaded all of the fonts
+loadfonts(device = "win")       
+fonts()
+library(tidyverse)
+library(data.table)
+
+##############
+## Data from: Lang, M., et al. (2019). Moralistic gods, extended prosociality, 
+## and religious parochialism across 15 societies. 
+## Proceedings of the Royal Society B, 286(1898): 20190202.
+
+## Figure 1
+par(mfrow = c(2, 1), mai = c(1, 1.3, 0.3, 0.1)) #bottom, left, top, right
+
+labs <- c("Intercept", "Reward", "Moral Interest", "Omni/Pun") # bottom --> top
+
+# Random Allocation Game
+# Self vs. Distant (Model 5, p. 32 Supps)
+x <- 1:length(labs)
+OR <- c(0.79, 0.99, 0.98, 1.24)
+LL <- c(0.65, 0.87, 0.95, 1.04)
+UL <- c(0.96, 1.12, 1.02, 1.48)
+LS <- OR - LL
+US <- UL - OR
+tab <- data.frame(cbind(labs, x, OR, LL, UL, LS, US))
+
+plot(OR, x, pch = 16, xlim = c(0.5, 1.6), ylim = c(0.5, length(labs)), xlab = NA, 
+     ylab = NA, yaxt = "n", frame.plot = F, log = "x")
+arrows(x0 = OR - LS, y0 = x, x1 = US + OR, y1 = x, code = 3, angle = 90, length = 0.05)
+abline(v = 1, lty = 2)
+axis(2, at = x-.15, labels = labs, las = 2, family = "Calibri")
+mtext("Random Allocation Game", side = 1, padj = 3.5)
+
+par(new = TRUE)
+
+# Local vs. Distant (Model 5, p. 33 Supps)
+#labs <- c("Intercept", "Reward", "Moral Interest", "Punishment")
+
+x2 <- x-.3
+OR2 <- c(0.92, 0.98, 1.01, 1.22)
+LL2 <- c(0.75, 0.86, 0.97, 1.03)
+UL2 <- c(1.13,  1.12, 1.05, 1.46)
+LS2 <- OR2 - LL2
+US2 <- UL2 - OR2
+tab2 <- data.frame(cbind(labs, x, OR, LL, UL, LS, US))
+
+plot(OR2, x2, pch = 1, xlim = c(0.5, 1.6), ylim = c(0.5, length(labs)), xlab = NA, 
+     ylab = NA, yaxt = "n", frame.plot = F, log = "x")
+arrows(x0 = OR2 - LS2, y0 = x2, x1 = US2 + OR2, y1 = x2, code = 3, angle = 90, length = 0.05, lty = 3)
+
+#legend(0.6, 4, legend = c("Self vs. Distant", "Local vs. Distant"),
+#       col = c("black", "black"), pch = c(16, 1), lty = c(1,3), cex = 0.8,
+#       title = "Game")
+
+### Dictator Game
+# Self vs. Distant (Model 5, p. 34 Supps)
+#labs <- c("Intercept", "Reward", "Moral Interest", "Punishment")
+x3 <- 1:length(labs)
+OR3 <- c(4.08, -0.18, -0.06, 1.00)
+LL3 <- c(2.84, -0.83, -0.26, -0.06)
+UL3 <- c(5.31, 0.47, 0.13, 2.06)
+LS3 <- OR3 - LL3
+US3 <- UL3 - OR3
+tab3 <- data.frame(cbind(labs, x3, OR3, LL3, UL3, LS3, US3))
+
+plot(OR3, x3, pch = 16, xlim = c(-1, 6), ylim = c(0.5, length(labs)), xlab = NA, 
+     ylab = NA, yaxt = "n", frame.plot = F)
+arrows(x0 = OR3 - LS3, y0 = x3, x1 = US3 + OR3, y1 = x, code = 3, angle = 90, length = 0.05)
+abline(v = 0, lty = 2)
+axis(2, at = x-.15, labels = labs, las = 2, family = "Calibri")
+
+par(new = TRUE)
+
+# Local vs. Distant (Model 5, p. 35 Supps)
+#labs <- c("Intercept", "Reward", "Moral Interest", "Punishment")
+x4 <- x-.3
+OR4 <- c(3.00, 0.08, 0.04, 0.56)
+LL4 <- c(1.89, -0.47, -0.12, -0.34)
+UL4 <- c(4.10, 0.63, 0.21, 1.45)
+LS4 <- OR4 - LL4
+US4 <- UL4 - OR4
+tab4 <- data.frame(cbind(labs, x4, OR4, LL4, UL4, LS4, US4))
+
+plot(OR4, x4, pch = 1, xlim = c(-1, 6), ylim = c(0.5, length(labs)), xlab = NA, 
+     ylab = NA, yaxt = "n", frame.plot = F)
+arrows(x0 = OR4 - LS4, y0 = x4, x1 = US4 + OR4, y1 = x4, code = 3, angle = 90, length = 0.05, lty = 3)
+mtext("Dictator Game", side = 1, padj = 3.5)
+legend(3, 4, legend = c("Self vs. Distant", "Local vs. Distant"),
+       col = c("black", "black"), pch = c(16, 1), lty = c(1,3), cex = 0.8,
+       title = "Game")
+
+################
+## Figure 2
+## For use with Swanson (1960) data: 
+## https://github.com/bgpurzycki/Swanson_BirthoftheGods
+
+d <-
+  read.csv('Swanson_Data.csv', sep=';') %>% 
+  dplyr::select(   # choosing variables
+    society=X,
+    size=X4,   # size of society
+    sovorg = X12, # sovereign organizations
+    highgods=X25,  # high gods: 4 = NA, 3 = present, moralistic
+    ancestor_punish=X29,   #  2= present, punish living humans
+    moral_health=X37,
+    moral_afterlife=X38,
+    moral_other=X39   # sanctions for morality on: health, afterlife, other (e.g., crop failure)
+  ) %>% 
+  as_tibble() %>% 
+  mutate(
+    across(size:moral_other, as.numeric))    # converting characters to numeric
+
+d$size_labels <- NA
+d$size_labels[d$size==0] <- "1-49"
+d$size_labels[d$size==1] <- "50-399"
+d$size_labels[d$size==2] <- "400-9999"
+d$size_labels[d$size==3] <- "10000+"
+d$size_labels <- factor(d$size_labels, levels=c('1-49', '50-399', '400-9999', '10000+'))
+
+d$highgods[d$highgods==4] <- NA   
+d$highgods <- as.numeric(d$highgods==3)    # high gods concerned about morality?
+
+d$ancestor_punish <- as.numeric(d$ancestor_punish==2)    # ancestors punish moral violations?
+
+d$bin <- as.numeric(
+  d$ancestor_punish | 
+    d$highgods | 
+    d$moral_health | 
+    d$moral_afterlife | 
+    d$moral_other
+) 
+
+tab1 <- prop.table(table(d$highgods, d$size_labels),2)
+tab2 <- prop.table(table(d$bin, d$size_labels), 2)
+tabz <- rbind(tab1[2,], tab2[2,])
+
+par(mfrow = c(1, 1), mar = c(4, 4, 1, 1))
+barplot(tabz, beside = T, ylab = "Proportion Present", xlab = "Society Size",
+        cex.names = 1, cex.axis = 1)
+legend(.55, .95, legend = c("Moralistic High Gods", "Moralistic Supernatural Sanctions"),
+       fill = c("black", "lightgray"), bty = "n", cex = 1)
